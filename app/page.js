@@ -1,6 +1,7 @@
 'use client';
 
-// import BlocCard from '@components/cards/BlogCard';
+import BlogCard from '@/components/cards/BlogCard';
+import Tag from '@/components/cards/Tag';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -52,7 +53,45 @@ export default function Home() {
         <h2 className="text-5xl border-b-4 pb-3 font-bold">Keba Web Dev Blog</h2>
         <p className="text-lg mt-10">Like, share and subscribe for more content!</p>
       </div>
-      <h3 className="flex flex-wrap mt-10 gap-4">{[...new Set(posts?.map(post => post.tag))]}</h3>
+      <h3 className="flex flex-wrap mt-10 gap-4 cursor-pointer">
+        {[...new Set(posts?.map(post => post.tag))].map(tag => (
+          <Tag
+            key={tag}
+            tag={tag}
+            isSelected={selectedTag.includes(tag)}
+            setSelectedTag={setSelectedTag}
+          />
+        ))}
+        {selectedTag?.length !== 0 && (
+          <button
+            className="bg-red-500 text-white px-3 py-1 rounded-md"
+            onClick={() => setSelectedTag([])}
+          >
+            Clear
+          </button>
+        )}
+      </h3>
+      {selectedTag?.length !== 0
+        ? posts
+            ?.filter(post => selectedTag.includes(post.tag))
+            .map(post => (
+              <BlogCard
+                tag={post.tag}
+                title={post.title}
+                image={post.image}
+                key={post.title}
+                desc={post.subheading}
+              />
+            ))
+        : posts.map(post => (
+            <BlogCard
+              tag={post.tag}
+              title={post.title}
+              image={post.image}
+              key={post.title}
+              desc={post.subheading}
+            />
+          ))}
     </main>
   );
 }
